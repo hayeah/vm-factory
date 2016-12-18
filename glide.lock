@@ -1,8 +1,10 @@
-hash: d610aa1d282dc7d2ef931d6f57c776bf82edbcc23698b4554096dd715bb7b05d
-updated: 2016-12-18T09:42:45.002605187+08:00
+hash: e495b3b5a030c6844dee01ae0438254e79127b60ee1c605200ad7fd9fd57634d
+updated: 2016-12-18T10:10:48.071060036+08:00
 imports:
 - name: github.com/labstack/echo
-  version: 8d504c1b699c757b267255c53b3e5219f9974abc
+  version: dc92c26084ec02a6b6c186e37606081c82169a41
+  repo: https://github.com/labstack/echo.git
+  vcs: git
 - name: github.com/labstack/gommon
   version: 447fe7433567c785af957e549aadae2bf2000071
   subpackages:

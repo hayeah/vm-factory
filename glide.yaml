@@ -1,7 +1,9 @@
 package: vitrinemedia/factory
 import:
 - package: github.com/labstack/echo
-  version: ^3.0.3
+  version: master
+  vcs: git
+  repo: https://github.com/labstack/echo.git
 - package: github.com/lib/pq
 - package: github.com/mattes/migrate
   version: ~1.2.0
