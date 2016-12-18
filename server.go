@@ -27,23 +27,23 @@ func init() {
 }
 
 type (
-	Context struct {
-		echo.Context
-	}
+	CustomBinder struct{}
 )
 
-func (c *Context) BindValidate(ptr interface{}) error {
-	err := c.Bind(c)
-	if err != nil {
-		return err
+func (cb *CustomBinder) Bind(i interface{}, c echo.Context) (err error) {
+	b := &echo.DefaultBinder{}
+
+	if err = b.Bind(i, c); err != nil {
+		return
 	}
 
-	return c.Validate(ptr)
+	return validate.Struct(i)
 }
 
 func Start() {
 
 	e := echo.New()
+	e.Binder = &CustomBinder{}
 
 	e.HTTPErrorHandler = func(err error, c echo.Context) {
 		switch err := err.(type) {

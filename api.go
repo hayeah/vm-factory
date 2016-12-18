@@ -21,15 +21,10 @@ func getProductInspections(c echo.Context) (err error) {
 
 func postProductInspection(c echo.Context) (err error) {
 	var req struct {
-		Serial string `json:serial validate:"required"`
+		Serial string `json:"serial" validate:"required"`
 	}
 
 	err = c.Bind(&req)
-	if err != nil {
-		return
-	}
-
-	err = validate.Struct(&req)
 	if err != nil {
 		return
 	}
