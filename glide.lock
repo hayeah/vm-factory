@@ -1,6 +1,8 @@
-hash: e495b3b5a030c6844dee01ae0438254e79127b60ee1c605200ad7fd9fd57634d
-updated: 2016-12-18T10:10:48.071060036+08:00
+hash: 7a1e80c3d1586cc1575ba3301cd4fd0db5b4805c9a6552e970ac84497752a3a5
+updated: 2016-12-18T10:13:50.047348764+08:00
 imports:
+- name: github.com/go-playground/validator
+  version: 49fccadad19338f93f46a5abdafc44cd731cf7a7
 - name: github.com/labstack/echo
   version: dc92c26084ec02a6b6c186e37606081c82169a41
   repo: https://github.com/labstack/echo.git

@@ -8,11 +8,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo"
 	_ "github.com/lib/pq"
 )
 
 var port int64 = 4000
+var validate = validator.New()
 
 func init() {
 	if envPort := os.Getenv("PORT"); envPort != "" {
@@ -23,6 +25,7 @@ func init() {
 
 		port = parsedPort
 	}
+
 }
 
 func Start() {
@@ -48,6 +51,17 @@ func Start() {
 	// 	}
 
 	// })
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		switch err := err.(type) {
+		case validator.ValidationErrors:
+			e.DefaultHTTPErrorHandler(&echo.HTTPError{
+				Code:    http.StatusBadRequest,
+				Message: err.Error(),
+			}, c)
+		default:
+			e.DefaultHTTPErrorHandler(err, c)
+		}
+	}
 
 	e.GET("/ping", func(c echo.Context) (err error) {
 		c.String(http.StatusOK, fmt.Sprintf("hello. time is: %v", time.Now()))
@@ -63,8 +77,9 @@ func Start() {
 
 	e.POST("/bind", func(c echo.Context) (err error) {
 		var req struct {
-			Number int    `query:"number"`
-			String string `query:"string"`
+			Id    int    `query:"id" validate:"gte=0"`
+			Name  string `query:"name" validate:"required"`
+			Email string `query:"email" validate:"required,email"`
 		}
 
 		err = c.Bind(&req)
@@ -75,10 +90,16 @@ func Start() {
 			}
 		}
 
+		err = validate.Struct(req)
+		if err != nil {
+			return err
+		}
+
 		type H map[string]interface{}
 
 		c.JSON(http.StatusOK, H{
 			"request": req,
+			"ok":      true,
 		})
 
 		return
