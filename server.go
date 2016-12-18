@@ -25,7 +25,21 @@ func init() {
 
 		port = parsedPort
 	}
+}
 
+type (
+	Context struct {
+		echo.Context
+	}
+)
+
+func (c *Context) BindValidate(ptr interface{}) error {
+	err := c.Bind(c)
+	if err != nil {
+		return err
+	}
+
+	return c.Validate(ptr)
 }
 
 func Start() {
@@ -77,22 +91,19 @@ func Start() {
 
 	e.POST("/bind", func(c echo.Context) (err error) {
 		var req struct {
-			Id    int    `query:"id" validate:"gte=0"`
-			Name  string `query:"name" validate:"required"`
-			Email string `query:"email" validate:"required,email"`
+			Id    int    `json:"id" validate:"gte=1"`
+			Name  string `json:"name" validate:"required"`
+			Email string `json:"email" validate:"required,email"`
 		}
 
 		err = c.Bind(&req)
 		if err != nil {
-			return &echo.HTTPError{
-				Code:    http.StatusBadRequest,
-				Message: "Invalid request body",
-			}
+			return
 		}
 
-		err = validate.Struct(req)
+		err = validate.Struct(&req)
 		if err != nil {
-			return err
+			return
 		}
 
 		type H map[string]interface{}
