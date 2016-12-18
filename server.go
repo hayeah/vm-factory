@@ -58,41 +58,7 @@ func Start() {
 	}
 
 	e.GET("/ping", func(c echo.Context) (err error) {
-		c.String(http.StatusOK, fmt.Sprintf("hello @ %v", time.Now()))
-		return
-	})
-
-	e.GET("/error", func(c echo.Context) (err error) {
-		return &echo.HTTPError{
-			Code:    http.StatusBadRequest,
-			Message: c.QueryParam("msg"),
-		}
-	})
-
-	e.POST("/bind", func(c echo.Context) (err error) {
-		var req struct {
-			Id    int    `json:"id" validate:"gte=1"`
-			Name  string `json:"name" validate:"required"`
-			Email string `json:"email" validate:"required,email"`
-		}
-
-		err = c.Bind(&req)
-		if err != nil {
-			return
-		}
-
-		err = validate.Struct(&req)
-		if err != nil {
-			return
-		}
-
-		type H map[string]interface{}
-
-		c.JSON(http.StatusOK, H{
-			"request": req,
-			"ok":      true,
-		})
-
+		c.String(http.StatusOK, fmt.Sprintf("hello:", time.Now()))
 		return
 	})
 
