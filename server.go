@@ -64,43 +64,8 @@ func Start() {
 
 	{
 		g := e.Group("/api/v1")
-
-		g.GET("/product_inspections", func(c echo.Context) (err error) {
-			var inspections []ProductInspection
-
-			err = DB.Select("*").From("product_inspections").QueryStructs(&inspections)
-
-			if err != nil {
-				return
-			}
-
-			c.JSONPretty(http.StatusOK, inspections, "  ")
-			return
-		})
-
-		g.POST("/product_inspections", func(c echo.Context) (err error) {
-			var req struct {
-				Serial string `json:serial validate:"required"`
-			}
-
-			err = c.Bind(&req)
-			if err != nil {
-				return
-			}
-
-			err = validate.Struct(&req)
-			if err != nil {
-				return
-			}
-
-			productInspection, err := UpsertProductInspection(req.Serial)
-			if err != nil {
-				return
-			}
-
-			c.JSON(http.StatusOK, productInspection)
-			return
-		})
+		g.GET("/product_inspections", getProductInspections)
+		g.POST("/product_inspections", postProductInspection)
 	}
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
