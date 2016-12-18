@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo"
-	_ "github.com/lib/pq"
 )
 
 var port int64 = 4000
@@ -44,27 +43,8 @@ func (c *Context) BindValidate(ptr interface{}) error {
 
 func Start() {
 
-	// engine, err := xorm.NewEngine("postgres", "dbname=vmfactory sslmode=disable")
-	// if err != nil {
-	// 	log.Fatalln("db connection failure:", err)
-	// }
-
 	e := echo.New()
 
-	// e := gin.New()
-
-	// e.Use(gin.Logger())
-	// e.Use(gin.Recovery())
-	// e.Use(func(c *gin.Context) {
-	// 	c.Next()
-	// 	if c.IsAborted() {
-	// 		c.JSON(5)
-	// 	}
-	// 	if c.Errors != nil {
-
-	// 	}
-
-	// })
 	e.HTTPErrorHandler = func(err error, c echo.Context) {
 		switch err := err.(type) {
 		case validator.ValidationErrors:
@@ -78,7 +58,7 @@ func Start() {
 	}
 
 	e.GET("/ping", func(c echo.Context) (err error) {
-		c.String(http.StatusOK, fmt.Sprintf("hello. time is: %v", time.Now()))
+		c.String(http.StatusOK, fmt.Sprintf("hello @ %v", time.Now()))
 		return
 	})
 
@@ -116,56 +96,46 @@ func Start() {
 		return
 	})
 
-	// e.GET("/ping", func(c *gin.Context) {
-	// 	c.String(200, "pong: %s\n", time.Now())
-	// })
+	{
+		g := e.Group("/api/v1")
 
-	// e.GET("/divide", func(c *gin.Context) {
-	// 	n, err := strconv.ParseInt(c.DefaultQuery("n", "0"), 10, 64)
-	// 	if err != nil {
-	// 		c.AbortWithError(500, err)
-	// 		return
-	// 	}
+		g.GET("/product_inspections", func(c echo.Context) (err error) {
+			var inspections []ProductInspection
 
-	// 	i := 10 / n
+			err = DB.Select("*").From("product_inspections").QueryStructs(&inspections)
 
-	// 	c.String(200, "ok: %d", i)
-	// })
+			if err != nil {
+				return
+			}
 
-	// e.GET("/error", func(c *gin.Context) {
-	// 	// c.Error()
+			c.JSONPretty(http.StatusOK, inspections, "  ")
+			return
+		})
 
-	// 	// c.AbortWithStatus()
-	// 	c.JSON(http.StatusBadRequest, c.Error(fmt.Errorf("test error")))
-	// })
+		g.POST("/product_inspections", func(c echo.Context) (err error) {
+			var req struct {
+				Serial string `json:serial validate:"required"`
+			}
 
-	// e.GET("/product_inspections", func(c *gin.Context) {
-	// 	var inspections []model.ProductInspections
+			err = c.Bind(&req)
+			if err != nil {
+				return
+			}
 
-	// 	err := engine.Find(&inspections)
-	// 	if err != nil {
-	// 		c.AbortWithError(500, err)
-	// 		return
-	// 	}
+			err = validate.Struct(&req)
+			if err != nil {
+				return
+			}
 
-	// 	c.IndentedJSON(200, inspections)
-	// })
+			productInspection, err := UpsertProductInspection(req.Serial)
+			if err != nil {
+				return
+			}
 
-	// e.POST("/product_inspections", func(c *gin.Context) {
-	// 	// TODO validate
+			c.JSON(http.StatusOK, productInspection)
+			return
+		})
+	}
 
-	// 	var req struct {
-	// 		Serial string `json:serial`
-	// 	}
-
-	// 	if err := c.BindJSON(&req); err != nil {
-	// 		c.Error(fmt.Errorf("Invalid request"))
-	// 		c.Abort()
-	// 		return
-	// 	}
-
-	// })
-
-	// e.Run()
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }

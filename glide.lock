@@ -1,6 +1,12 @@
-hash: 7a1e80c3d1586cc1575ba3301cd4fd0db5b4805c9a6552e970ac84497752a3a5
-updated: 2016-12-18T10:13:50.047348764+08:00
+hash: dd077d1c95be35833304a8e36885752bb9b518cb34b2e1ac69f77b7e4bc4e0db
+updated: 2016-12-18T14:39:03.086318092+08:00
 imports:
+- name: github.com/go-playground/locales
+  version: 273913d3b2ff7127452603d55dd3f6f888e4f268
+  subpackages:
+  - currency
+- name: github.com/go-playground/universal-translator
+  version: 8bf00f2bdf7faea5c3583d41f57bf1eb15b743d7
 - name: github.com/go-playground/validator
   version: 49fccadad19338f93f46a5abdafc44cd731cf7a7
 - name: github.com/labstack/echo
@@ -22,6 +28,8 @@ imports:
   version: d228849504861217f796da67fae4f6e347643f15
 - name: github.com/mattn/go-isatty
   version: 30a891c33c7cde7b02a981314b4228ec99380cca
+- name: github.com/mgutz/dat
+  version: c2a5759ae4b0303a8bf640d01a85ae3acc02455d
 - name: github.com/tylerb/graceful
   version: 4df1190835320af7076dfcf27b3d071fd3612caf
 - name: github.com/valyala/fasttemplate
